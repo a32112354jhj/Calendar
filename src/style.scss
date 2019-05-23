@@ -1,0 +1,257 @@
+* {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: Verdana, Arial, \\5fae\8edf\6b63\9ed1\9ad4, Microsoft JhengHei, \\5fae\8edf\96c5\9ed1\9ad4,
+    Microsoft YaHei;
+}
+
+.calendar_box {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  display: block;
+
+  .list_switch {
+    width: 100%;
+    text-align: right;
+    color: #0077b3;
+    font-size: 16px;
+    line-height: 24px;
+    text-decoration: none;
+    display: inline-block;
+    i {
+      margin-right: 5px;
+    }
+  }
+  .switch_bar {
+    width: 100%;
+  }
+  .week_bar {
+    width: 100%;
+  }
+
+  .calendar_t {
+    width: 100%;
+  }
+}
+
+.switch_bar {
+  background-color: #ede9dd;
+  height: 50px;
+  font-size: 0;
+  .ctrl_btn {
+    height: 48px;
+    width: 20px;
+    background-color: #ede9dd;
+    border: none;
+    cursor: pointer;
+    vertical-align: top;
+    &.prev_btn {
+      text-align: center;
+      display: inline-block;
+      &:before {
+        content: "";
+        margin: auto;
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        display: inline-block;
+        border-width: 7px 7px 7px 0;
+        border-color: transparent #e10500 transparent transparent;
+      }
+    }
+    &.next_btn {
+      text-align: center;
+      &:before {
+        content: "";
+        margin: auto;
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        display: inline-block;
+        border-width: 7px 0 7px 7px;
+        border-color: transparent transparent transparent #e10500;
+      }
+    }
+  }
+  .month_bar {
+    width: calc(100% - 40px);
+    display: inline-block;
+    font-size: 0;
+    color: #666;
+    .month_box {
+      font-size: 16px;
+      text-align: center;
+      line-height: 50px;
+      height: 50px;
+      display: inline-block;
+      width: 33.333333%;
+      cursor: pointer;
+      span {
+      }
+
+      &.clk {
+        background-color: #fff;
+        color: #e10500;
+        box-sizing: border-box;
+        border-top: 2px solid #ede9dd;
+      }
+    }
+  }
+}
+
+.week_bar {
+  font-size: 0;
+  border: 1px solid #f4f4f4;
+  box-sizing: border-box;
+  li {
+    display: inline-block;
+    vertical-align: middle;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    width: calc(100% / 7);
+  }
+}
+
+.calendar_tb {
+  border-left: 1px solid #f4f4f4;
+  border-right: 1px solid #f4f4f4;
+  font-size: 0;
+  .day_box {
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: top;
+    width: calc(100% / 7);
+    box-sizing: border-box;
+    height: 85px;
+    padding: 0 3px;
+    color: #666;
+    border-right: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+    padding: 3px;
+    line-height: 16px;
+    position: relative;
+    &:nth-child(7n) {
+      border-right: none;
+    }
+    &.no_date {
+      background-color: #f4f4f4;
+    }
+    &.has_date {
+    }
+
+    .day {
+      color: #444;
+    }
+    .week_day {
+      display: none;
+    }
+    .status {
+      color: #ff7800;
+      &.alternate {
+        color: #1c9c9d;
+      }
+    }
+    .available {
+    }
+    .total {
+    }
+    .price {
+      color: #e10500;
+    }
+    .guaranteed {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 2px 5px;
+      background-color: #ff7800;
+      color: #fff;
+    }
+  }
+}
+
+//LIST STYLE =======================
+.list_sty {
+  .week_bar {
+    display: none;
+  }
+  .calendar_tb {
+      border-color: rgb(227, 227, 227);
+    .day_box {
+      position: relative;
+      width: 100%;
+      height: auto;
+      border-right: none;
+      display: none;
+      border-color: rgb(227, 227, 227);
+      &.has_data {
+        display: block;
+      }
+      .day {
+        height: 60px;
+        width: 65px;
+        text-align: center;
+        font-size: 24px;
+        line-height: 30px;
+        display: inline-block;
+        vertical-align: top;
+      }
+      .week_day {
+        display: block;
+        font-size: 16px;
+        line-height: 24px;
+        &.sunday {
+          color: #e10500;
+        }
+      }
+      .status {
+        position: absolute;
+        font-size: 16px;
+        right: 0;
+        top: 10px;
+        line-height: 24px;
+        padding: 0 5px;
+      }
+      .available {
+        display: inline-block;
+        vertical-align: top;
+        font-size: 14px;
+        margin-right: 30px;
+        line-height: 24px;
+        color: #666;
+      }
+      .total {
+          display: inline-block;
+          vertical-align: top;
+          font-size: 14px;
+          line-height: 24px;
+          color: #666;
+      }
+      .price {
+        position: absolute;
+        font-size: 16px;
+        right: 0;
+        bottom: 10px;
+        line-height: 24px;
+        padding: 0 5px;
+      }
+      .guaranteed{
+          bottom: 12px;
+          right: auto;
+          left: 68px;
+          font-size: 14px;
+          border-radius: 3px;
+          top:auto;
+          display: inline-block;
+          top:static;
+      }
+    }
+  }
+}
