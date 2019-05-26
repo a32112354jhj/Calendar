@@ -12,7 +12,7 @@ class App extends React.Component {
     initYearMonth: '201705', //當前月份
     initYearMonth_next: '201706',
     initYearMonth_prev: '201704',
-    data : {
+    data: {
       "guaranteed": true, // {boolean}
       "date": "2016/12/15", // {string} YYYY/MM/DD
       "price": "234567", // {string|number} XXXXXX | 近期上架
@@ -22,7 +22,7 @@ class App extends React.Component {
     },
   }
 
-  // 列表模式切換
+  // 列表模式切換========================================
   ListStatus = () => {
     if (this.state.list_style === true) {
       this.setState({
@@ -36,28 +36,28 @@ class App extends React.Component {
     }
   }
 
-  // 年月處理
+  // 年月處理=============================================
   YearMonth = () => {
-    
-    let month_li=[];
 
-    let YearMonth=this.state.data.map((item,key)=>{
-      month_li.push(item.date.substr(0,7));
-    }); 
+    let month_li = [];
 
-    let date_filter=month_li.filter(function(element,index,arr){
+    let YearMonth = this.state.data.map((item, key) => {
+      month_li.push(item.date.substr(0, 7));
+    });
+
+    let date_filter = month_li.filter(function (element, index, arr) {
       return arr.indexOf(element) === index;
     }).sort();
-    
+
     // console.log(date_filter);
-    
+
     // 取得月份天數
-    console.log(moment("201905", "YYYYMM").daysInMonth() );
+    console.log(moment("201905", "YYYYMM").daysInMonth());
   }
 
   // componentDidMount=====================
   componentDidMount() {
-    
+
     fetch(
       '/json/data1.json'
     )
@@ -115,6 +115,10 @@ class App extends React.Component {
           </ul>
 
           {/* 日期 */}
+
+          }
+
+          {/* HTML樣板 */}
           <div className="calendar_tb">
             <div className="day_box no_date">
             </div>
