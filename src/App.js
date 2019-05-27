@@ -9,7 +9,7 @@ class App extends React.Component {
 
   state = {
     list_style: false,
-    initYearMonth: '201705', //當前月份
+    initYearMonth: '201905', //當前年月
     initYearMonth_next: '201706',
     initYearMonth_prev: '201704',
     data: {
@@ -20,6 +20,9 @@ class App extends React.Component {
       "totalVacnacy": 20, // {number}
       "status": "報名" // {string} 報名(#24a07c) | 後補(#24a07c) | 預定(#24a07c) | 截止(#ff7800) | 額滿(#ff7800) | 關團(#ff7800)
     },
+    getDays: 0,//當前月份天數
+    FirstDayWeek: 2,//當前月份第一天星期
+    days:[],
   }
 
   // 列表模式切換========================================
@@ -35,42 +38,58 @@ class App extends React.Component {
       });
     }
   }
-
+  
   // 年月處理=============================================
   YearMonth = () => {
 
-    let month_li = [];
+    let month_li = [];//月份
 
-    let YearMonth = this.state.data.map((item, key) => {
-      month_li.push(item.date.substr(0, 7));
-    });
+    // let YearMonth = this.state.data.map((item, key) => {
+    //   month_li.push(item.date.substr(0, 7));
+    // });
 
-    let date_filter = month_li.filter(function (element, index, arr) {
-      return arr.indexOf(element) === index;
-    }).sort();
-
-    // console.log(date_filter);
+    // Data月份排序
+    // let date_filter = month_li.filter(function (element, index, arr) {
+    //   return arr.indexOf(element) === index;
+    // }).sort();
 
     // 取得月份天數
-    console.log(moment("201905", "YYYYMM").daysInMonth());
+    this.setState({
+      getDays: moment(this.state.initYearMonth, "YYYYMM").daysInMonth(),
+      FirstDayWeek:moment(this.state.initYearMonth+"01","YYYYMMDD").format('d'),
+    });
+    console.log(this.state.getDays+':::'+this.state.FirstDayWeek);
+  }
+
+  // 日曆日期===================================
+  calendarDays(){
+    let days=[];
+    for(var i = 0 ;i < this.state.FirstDayWeek; i++ ){
+      days[i] = i;
+    }
+    console.log(days);
   }
 
   // componentDidMount=====================
   componentDidMount() {
-
+    // this.YearMonth();
+    // this.calendarDays();
     fetch(
       '/json/data1.json'
     )
       .then(res => res.json())
       .then(data => {
-        // console.log(data);
         this.setState({
           data: data,
         });
         this.YearMonth();
+        this.calendarDays();
       })
       .catch(e => console.log('錯誤:', e));
+
   }
+
+  
   // componentDidMount(E)===================
 
   render() {
@@ -115,9 +134,10 @@ class App extends React.Component {
           </ul>
 
           {/* 日期 */}
-
+          {
+            
           }
-
+      
           {/* HTML樣板 */}
           <div className="calendar_tb">
             <div className="day_box no_date">
