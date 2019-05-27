@@ -6,24 +6,31 @@ import moment from 'moment';
 
 class App extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      list_style: false,
+      initYearMonth: '201902', //當前年月
+      initYearMonth_next: '201706',
+      initYearMonth_prev: '201704',
+      data: {
+        "guaranteed": true, // {boolean}
+        "date": "2016/12/15", // {string} YYYY/MM/DD
+        "price": "234567", // {string|number} XXXXXX | 近期上架
+        "availableVancancy": 0, // {number}
+        "totalVacnacy": 20, // {number}
+        "status": "報名" // {string} 報名(#24a07c) | 後補(#24a07c) | 預定(#24a07c) | 截止(#ff7800) | 額滿(#ff7800) | 關團(#ff7800)
+      },
+      getDays: 0,      //當前月份天數
+      FirstDayWeek: 0,//當前月份第一天星期
+      days: [],       //日期欄位
+      days_nd: [],    //空欄位
+      days_nda: [],   //補空欄位
+    }
 
-  state = {
-    list_style: false,
-    initYearMonth: '201905', //當前年月
-    initYearMonth_next: '201706',
-    initYearMonth_prev: '201704',
-    data: {
-      "guaranteed": true, // {boolean}
-      "date": "2016/12/15", // {string} YYYY/MM/DD
-      "price": "234567", // {string|number} XXXXXX | 近期上架
-      "availableVancancy": 0, // {number}
-      "totalVacnacy": 20, // {number}
-      "status": "報名" // {string} 報名(#24a07c) | 後補(#24a07c) | 預定(#24a07c) | 截止(#ff7800) | 額滿(#ff7800) | 關團(#ff7800)
-    },
-    getDays: 0,//當前月份天數
-    FirstDayWeek: 2,//當前月份第一天星期
-    days:[],
+    this.YearMonth = this.YearMonth.bind(this);
   }
+
 
   // 列表模式切換========================================
   ListStatus = () => {
@@ -38,7 +45,7 @@ class App extends React.Component {
       });
     }
   }
-  
+
   // 年月處理=============================================
   YearMonth = () => {
 
@@ -54,26 +61,61 @@ class App extends React.Component {
     // }).sort();
 
     // 取得月份天數
+    let _this = this;
     this.setState({
       getDays: moment(this.state.initYearMonth, "YYYYMM").daysInMonth(),
-      FirstDayWeek:moment(this.state.initYearMonth+"01","YYYYMMDD").format('d'),
+      FirstDayWeek: moment(this.state.initYearMonth + "01", "YYYYMMDD").format('d')
+    }, () => {
+      _this.calendarDays()
     });
-    console.log(this.state.getDays+':::'+this.state.FirstDayWeek);
+    console.log(this.state.getDays + ':::' + this.state.FirstDayWeek);
   }
 
   // 日曆日期===================================
-  calendarDays(){
-    let days=[];
-    for(var i = 0 ;i < this.state.FirstDayWeek; i++ ){
-      days[i] = i;
+  calendarDays = () => {
+    let days_nd = []; //空日期
+    let days = [];    //日曆日期
+    let days_nda =[]; //補空日期
+    let vacancy = 42-(parseInt(this.state.getDays)+parseInt(this.state.FirstDayWeek));
+
+    for (var i = 0; i < this.state.FirstDayWeek; i++) {
+      days_nd[i] = i;
     }
-    console.log(days);
+
+    // 塞入日期天數
+    for (var x = 1; x <= this.state.getDays; x++) {
+      let n = x;
+      if (x < 10) {
+        n = "0" + n;
+      }
+      days[x] = n;
+    }
+
+     // 塞入空的天數
+     for (var y = 1; y <= vacancy; y++) {
+      days_nda[y] = y;
+    }
+
+
+
+    this.setState({
+      days_nd: days_nd,
+      days: days,
+      days_nda:days_nda,
+    }, () => {
+      console.log('NoData:' + this.state.days_nd);
+      console.log('Date:' + this.state.days);
+      console.log('Date:' + vacancy);
+    });
+
+    return;
   }
+
 
   // componentDidMount=====================
   componentDidMount() {
-    // this.YearMonth();
-    // this.calendarDays();
+    this.YearMonth();
+
     fetch(
       '/json/data1.json'
     )
@@ -82,17 +124,18 @@ class App extends React.Component {
         this.setState({
           data: data,
         });
-        this.YearMonth();
-        this.calendarDays();
       })
       .catch(e => console.log('錯誤:', e));
 
   }
 
-  
   // componentDidMount(E)===================
 
   render() {
+
+    // this.YearMonth();
+    // this.calendarDays();
+
     return (
       <div className="App">
 
@@ -134,13 +177,45 @@ class App extends React.Component {
           </ul>
 
           {/* 日期 */}
-          {
-            
-          }
-      
+
+
           {/* HTML樣板 */}
           <div className="calendar_tb">
-            <div className="day_box no_date">
+            {/* 空(前) */}
+            {
+              this.state.days_nd.map((item, key) => {
+                return (
+                  <div className="day_box no_date" key={key}>
+                  </div>
+                )
+              })
+            }
+
+            {
+              this.state.days.map((item, key) => {
+                return (
+                  <div className="day_box has_date has_data" key={key}>
+                    <p className="day">{item}<span className="week_day">星期一</span></p>
+                    <p className="status">報名</p>
+                    <p className="available">可賣:<span>20</span></p>
+                    <p className="total">團位:<span>35</span></p>
+                    <p className="price">$28,000</p>
+                  </div>
+                )
+              })
+            }
+
+            {/* 空(後) */}
+            {
+              this.state.days_nda.map((item, key) => {
+                return (
+                  <div className="day_box no_date" key={key}>
+                  </div>
+                )
+              })
+            }
+
+            {/* <div className="day_box no_date">
             </div>
             <div className="day_box no_date">
             </div>
@@ -181,8 +256,10 @@ class App extends React.Component {
             <div className="day_box no_date">
             </div>
             <div className="day_box no_date">
-            </div>
+            </div> */}
+
           </div>
+          {/* calendar_tb(END) */}
 
         </div>
       </div>
