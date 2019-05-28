@@ -152,6 +152,11 @@
   padding: 3px;
   line-height: 16px;
   position: relative;
+  cursor: pointer;
+}
+
+.calendar_tb .day_box:hover {
+  background-color: #fff9e3;
 }
 
 .calendar_tb .day_box:nth-child(7n) {
@@ -178,6 +183,10 @@
   color: #1c9c9d;
 }
 
+.calendar_tb .day_box .status.cutoff {
+  color: #999;
+}
+
 .calendar_tb .day_box .price {
   color: #e10500;
 }
@@ -189,6 +198,10 @@
   padding: 2px 5px;
   background-color: #ff7800;
   color: #fff;
+}
+
+.calendar_tb .day_box .guaranteed.hide {
+  display: none !important;
 }
 
 .list_sty .week_bar {
