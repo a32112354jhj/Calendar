@@ -7,6 +7,14 @@ import moment from 'moment';
 
 class App extends React.Component {
   weekList = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  
+  // guaranteed=data.guaranteed;
+  // date=data.date;
+  // price=data.price;
+  // availableVancancy=data.availableVancancy;
+  // totalVacnacy=data.totalVacnacy;
+  // status=data.status;
+
   constructor(props) {
     super(props)
 
