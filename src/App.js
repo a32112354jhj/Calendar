@@ -7,7 +7,7 @@ import moment from 'moment';
 
 class App extends React.Component {
   weekList = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-  
+
   // guaranteed=data.guaranteed;
   // date=data.date;
   // price=data.price;
@@ -22,7 +22,7 @@ class App extends React.Component {
 
     this.state = {
       list_style: false,
-      initYearMonth: '201709', //當前年月
+      initYearMonth: props.initYearMonth, //當前年月
       initYearMonth_next: '201706',
       initYearMonth_prev: '201704',
       data: [{
@@ -126,7 +126,7 @@ class App extends React.Component {
     this.YearMonth();
 
     fetch(
-      '/json/data1.json'
+      '/json/data2.json'
     )
       .then(res => res.json())
       .then(data => {
@@ -143,22 +143,31 @@ class App extends React.Component {
   // 塞入月曆內容===========================
   findData = (item) => {
 
+
     let row = this.state.data.find((item2) => {
       return item2.date == moment(item, 'YYYYMMDD').format('YYYY/MM/DD')
     })
 
     if (row) {
+      // Data值
+      let guaranteed_data = row.guaranteed || row.certain,
+          date_data = row.date,
+          price_data=row.price,
+          availableVancancy_data = row.availableVancancy || row.onsell,
+          totalVacnacy_data = row.totalVacnacy || row.total,
+          status_data = row.status || row.state; 
+
       return (
         <div className="day_box has_date has_data">
           <p className="day">{item.substr(6, 8)}
             <span className={moment(item).format('d') === '0' ? "week_day sunday" : "week_day"}>{this.weekList[moment(item).format('d')]}</span>
           </p>
-          <p className={"status " + this.statusColor(row.status)}>{row.status}</p>
-          <p className="available">可賣:<span>{row.availableVancancy}</span></p>
-          <p className="total">團位:<span>{row.totalVacnacy}</span></p>
-          <p className="price">${row.price.toLocaleString()}</p>
+          <p className={"status " + this.statusColor(status_data)}>{status_data}</p>
+          <p className="available">可賣:<span>{availableVancancy_data}</span></p>
+          <p className="total">團位:<span>{totalVacnacy_data}</span></p>
+          <p className="price">${price_data.toLocaleString()}</p>
 
-          <p className={row.guaranteed ? "guaranteed" : "guaranteed hide"}>成團</p>
+          <p className={guaranteed_data ? "guaranteed" : "guaranteed hide"}>成團</p>
         </div>
       )
     }
@@ -207,7 +216,7 @@ class App extends React.Component {
                 <span>2019 7月</span>
               </li>
               <li className="month_box clk">
-                <span>2019 8月</span>
+                <span>{moment(this.state.initYearMonth,"YYYYMM").format("YYYY M月")}</span>
               </li>
               <li className="month_box">
                 <span>2019 9月</span>
@@ -241,14 +250,14 @@ class App extends React.Component {
               })
             }
 
-            {
+            {/* {
               this.state.data.map((item, index, arr) => {
                 index = item["date"];
                 if (index === "2017/09/09") {
                   console.log(item["price"])
                 }
               })
-            }
+            } */}
 
             {
               this.state.days.map((item, key) => {
