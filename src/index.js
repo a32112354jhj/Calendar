@@ -37,15 +37,15 @@ ReactDOM.render(<App
     // @param $btn {$object} jquery 物件
     // @param $data {array} 上一個月的資料
     // @param module {object} 此模組實例物件
-    onClickPrev={function ($btn, data, module) {
+    onClickPrev={($btn, data, module)=>{
         console.log($btn, data, module);
     }}
     // 點下一個月時
-    onClickNext={function ($btn, data, module) {
+    onClickNext={($btn, data, module)=> {
         console.log($btn, data, module);
     }}
     // 點日期時
-    onClickDate={function ($date, data) {
+    onClickDate={($date, data)=>{
         console.log($date, data);
     }} />, document.getElementById('root'));
 
