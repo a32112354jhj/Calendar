@@ -51,14 +51,13 @@ class App extends React.Component {
   YearMonth = (change) => {
 
     let monthList = [], //Data月份
-      yearMonthPosition = 0,
-      showData = [this.state.initYearMonthPrev, this.state.initYearMonth, this.state.initYearMonthNext];
+      yearMonthPosition = 0;
 
     this.state.data.map((item, key) => {
       monthList.push(moment(item.date.substr(0, 7), "YYYY/MM").format("YYYYMM"));
     });
-
     monthList = [...(new Set(monthList))].sort(); //篩選重複、排序
+    
     yearMonthPosition = monthList.indexOf(this.state.initYearMonth);
 
     if (change === 'next') {
