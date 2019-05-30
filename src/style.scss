@@ -140,6 +140,9 @@
     line-height: 16px;
     position: relative;
     cursor: pointer;
+    &.focuse{
+      border:1px solid #0a0;
+    }
     &:hover{
       background-color:#fff9e3;
     }
@@ -204,6 +207,9 @@
       border-right: none;
       display: none;
       border-color: rgb(227, 227, 227);
+      &.focuse{
+        border:1px solid #0a0;
+      }
       &.has_data {
         display: block;
       }

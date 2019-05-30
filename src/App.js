@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './style.css';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -13,7 +12,7 @@ class App extends React.Component {
 
     this.state = {
       listStyle: false,
-      initYearMonth: props.initYearMonth, //當前年月
+      //initYearMonth: props.initYearMonth, //當前年月
       showYearMonth: props.initYearMonth,
       data: [{
         "guaranteed": true, // {boolean}
@@ -31,16 +30,79 @@ class App extends React.Component {
       monthList: [], //Data月份
       selectMonthtList: [],
       yearMonthPosition: 0, //Data月份monthList位置
-      clkPosition: 1,
-      monthBar:0,
+      clkPosition: 1, //反白狀態
+      monthBar: 0,    //顯示時間位置
+      nextMonth: 0,   //月份軸(左)
+      centerMonth: 0, //月份軸(中)
+      prevMonth: 0,   //月份軸(右)
+      monthData: [],
+      focusDate: 0,
     }
 
     this.YearMonth = this.YearMonth.bind(this);
   }
 
-  onClickPrev =(btn, data)=>{
-    this.props.onClickPrev(btn,data);
+  //狀態動作
+  calendar = (event, data) => {
+    switch (event) {
+      case 'nextMonth':
+        this.YearMonth('next');
+        data(this.YearMonth('next'), window.Calendar);
+        return;
+
+      case 'prevMonth':
+        this.YearMonth('prev');
+        data(this.YearMonth('prev'), window.Calendar);
+        return;
+
+      case 'switch':
+        this.upateListStatus();
+        break;
+
+      case 'inputData':
+        this.setState({
+          data: this.state.data.concat(data),
+        });
+        console.log(this.state.data);
+        break;
+
+      case 'resetData':
+        this.setState({
+          data: [data],
+        });
+        console.log(this.state.data);
+        break;
+
+      default:
+        return;
+    }
+
+  }
+
+  // 上一個月
+  onClickPrev = (e, date, mod) => {
+    let monthData = this.state.data.filter((item) => {
+      return moment(item.date, 'YYYY/MM/DD').format('YYYYMM') === date;
+    })
+    this.props.onClickPrev(e.currentTarget, monthData, mod);
     this.YearMonth('prev');
+  }
+
+  // 下一個月
+  onClickNext = (e, date, mod) => {
+    let monthData = this.state.data.filter((item) => {
+      return moment(item.date, 'YYYY/MM/DD').format('YYYYMM') === date;
+    })
+    this.props.onClickPrev(e.currentTarget, monthData, mod);
+    this.YearMonth('next');
+  }
+
+  // 點日期時
+  onClickDate = (date, data) => {
+    this.props.onClickDate(date, data);
+    this.setState({
+      focusDate: date,
+    });
   }
 
   // 列表模式切換========================================
@@ -64,37 +126,64 @@ class App extends React.Component {
     });
     monthList = [...(new Set(monthList))].sort(); //篩選重複、排序
 
-    yearMonthPosition = monthList.indexOf(this.state.initYearMonth);
-    monthBar = yearMonthPosition;
+    // 比對日期
+    if (parseInt(this.state.showYearMonth) > parseInt(monthList[monthList.length - 1])) {
+      yearMonthPosition = monthList.indexOf(monthList[monthList.length - 1]);
+      monthBar = monthList.length - 2;
+      clkPosition = 2;
+    }
+    else if (parseInt(this.state.showYearMonth) < parseInt(monthList[0])) {
+      yearMonthPosition = monthList.indexOf(monthList[0]);
+      monthBar = 1;
+      clkPosition = 0;
+    }
+    else {
+      yearMonthPosition = monthList.indexOf(this.state.showYearMonth);
+      monthBar = yearMonthPosition;
+    }
+
+
+    
 
     // 更動事件處理
     if (change === 'next') {
       if (yearMonthPosition < monthList.length - 1) {
         yearMonthPosition += 1;
       }
-      yearMonthPosition > monthList.length - 2 ? monthBar=monthList.length - 2:monthBar+=1;
-      yearMonthPosition > monthList.length - 2 ? clkPosition=2:clkPosition=1;
+      yearMonthPosition > monthList.length - 2 ? monthBar = monthList.length - 2 : monthBar += 1;
+      yearMonthPosition > monthList.length - 2 ? clkPosition = 2 : clkPosition = 1;
+
+      let monthData = this.state.data.filter((item) => {
+        return moment(item.date, 'YYYY/MM/DD').format('YYYYMM') === monthList[yearMonthPosition];
+      })
+      // return monthData;
     }
-    else if (change === 'prev') { 
+    else if (change === 'prev') {
       if (yearMonthPosition > 0) {
         yearMonthPosition -= 1;
       }
-       yearMonthPosition < 1 ? monthBar=1:monthBar-=1;
-       yearMonthPosition < 1 ? clkPosition=0:clkPosition=1;
+      yearMonthPosition < 1 ? monthBar = 1 : monthBar -= 1;
+      yearMonthPosition < 1 ? clkPosition = 0 : clkPosition = 1;
+
+      let monthData = this.state.data.filter((item) => {
+        return moment(item.date, 'YYYY/MM/DD').format('YYYYMM') === monthList[yearMonthPosition];
+      })
+      // return monthData;
     }
 
-    console.log(clkPosition);
-    
     // 取得月份天數
     this.setState({
       getDays: moment(monthList[yearMonthPosition], "YYYYMM").daysInMonth(),
       FirstDayWeek: moment(monthList[yearMonthPosition] + "01", "YYYYMMDD").format('d'),
-      initYearMonth: monthList[yearMonthPosition],
+      // initYearMonth: monthList[yearMonthPosition],
       showYearMonth: monthList[yearMonthPosition],
       monthList: monthList,
       yearMonthPosition: yearMonthPosition,
-      monthBar:monthBar,
-      clkPosition:clkPosition,
+      monthBar: monthBar,
+      clkPosition: clkPosition,
+      nextMonth: monthList[monthBar + 1],
+      centerMonth: monthList[monthBar],
+      prevMonth: monthList[monthBar - 1],
     }, () => {
       this.calendarDays()
     });
@@ -137,9 +226,8 @@ class App extends React.Component {
 
   // 塞入月曆內容===========================
   findData = (item, key) => {
-
     let row = this.state.data.find((item2) => {
-      return item2.date == moment(item, 'YYYYMMDD').format('YYYY/MM/DD')
+      return item2.date === moment(item, 'YYYYMMDD').format('YYYY/MM/DD')
     })
 
     if (row) {
@@ -152,7 +240,7 @@ class App extends React.Component {
         statusData = row.status || row.state;
 
       return (
-        <div className="day_box has_date has_data" key={key}>
+        <div className={"day_box has_date has_data " + classNames({ 'focuse': this.state.focusDate === item })} key={key} onClick={() => { this.onClickDate(item, row); }}>
           <p className="day">
             {item.substr(6, 8)}
             <span className={moment(item).format('d') === '0' ? "week_day sunday" : "week_day"}>{this.weekList[moment(item).format('d')]}</span>
@@ -194,12 +282,13 @@ class App extends React.Component {
   componentDidMount() {
 
     fetch(
-      '/json/data1.json'
+      // '/json/data1.json'
+      this.props.dataSource
     )
       .then(res => res.json())
       .then(data => {
         this.setState({
-          data: data,
+          data: data.reverse(),
         });
         this.YearMonth();
       })
@@ -221,20 +310,20 @@ class App extends React.Component {
 
           {/* 月份選擇 */}
           <div className="switch_bar">
-            <button type="button" className="ctrl_btn prev_btn" onClick={() => this.onClickPrev(this)}>
+            <button type="button" className="ctrl_btn prev_btn" onClick={(e) => this.onClickPrev(e, this.state.prevMonth, this)}>
             </button>
             <ul className="month_bar">
-              <li className={"month_box "+classNames({ 'clk': this.state.clkPosition==0})}>
-                <span>{moment(this.state.monthList[this.state.monthBar - 1], "YYYYMM").format("YYYY M月")}</span>
+              <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 0 })}>
+                <span>{moment(this.state.prevMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
-              <li className={"month_box "+classNames({ 'clk': this.state.clkPosition==1})}>
-                <span>{moment(this.state.monthList[this.state.monthBar], "YYYYMM").format("YYYY M月")}</span>
+              <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 1 })}>
+                <span>{moment(this.state.centerMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
-              <li className={"month_box "+classNames({ 'clk': this.state.clkPosition==2})}>
-                <span>{moment(this.state.monthList[this.state.monthBar + 1], "YYYYMM").format("YYYY M月")}</span>
+              <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 2 })}>
+                <span>{moment(this.state.nextMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
             </ul>
-            <button type="button" className="ctrl_btn next_btn" onClick={() => this.YearMonth('next')}>
+            <button type="button" className="ctrl_btn next_btn" onClick={(e) => this.onClickNext(e, this.state.nextMonth, this)}>
             </button>
           </div>
 
