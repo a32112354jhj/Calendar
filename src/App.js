@@ -37,6 +37,7 @@ class App extends React.Component {
       prevMonth: 0,   //月份軸(右)
       monthData: [],
       focusDate: 0,
+      dataLength: 3,
     }
 
     this.YearMonth = this.YearMonth.bind(this);
@@ -47,12 +48,12 @@ class App extends React.Component {
     switch (event) {
       case 'nextMonth':
         this.YearMonth('next');
-        data(this.YearMonth('next'), window.Calendar);
+        data(this.state.monthData, window.Calendar);
         return;
 
       case 'prevMonth':
         this.YearMonth('prev');
-        data(this.YearMonth('prev'), window.Calendar);
+        data(this.state.monthData, window.Calendar);
         return;
 
       case 'switch':
@@ -63,14 +64,17 @@ class App extends React.Component {
         this.setState({
           data: this.state.data.concat(data),
         });
-        console.log(this.state.data);
         break;
 
       case 'resetData':
         this.setState({
-          data: [data],
+          data: data,
+          dataLength: data.length,
+          centerMonth: data[0].date,
+          showYearMonth:moment(data[0].date, 'YYYY/MM/DD').format('YYYYMM')
         });
-        console.log(this.state.data);
+
+     
         break;
 
       default:
@@ -119,7 +123,8 @@ class App extends React.Component {
       selectMonthtList = [],
       yearMonthPosition = 0, //Data月份monthList位置
       clkPosition = 1, //反白狀態
-      monthBar = 0; //月份顯示軸顯示位置
+      monthBar = 0, //月份顯示軸顯示位置
+      monthData = [];
 
     this.state.data.map((item, key) => {
       monthList.push(moment(item.date.substr(0, 7), "YYYY/MM").format("YYYYMM"));
@@ -143,7 +148,7 @@ class App extends React.Component {
     }
 
 
-    
+
 
     // 更動事件處理
     if (change === 'next') {
@@ -153,7 +158,7 @@ class App extends React.Component {
       yearMonthPosition > monthList.length - 2 ? monthBar = monthList.length - 2 : monthBar += 1;
       yearMonthPosition > monthList.length - 2 ? clkPosition = 2 : clkPosition = 1;
 
-      let monthData = this.state.data.filter((item) => {
+      monthData = this.state.data.filter((item) => {
         return moment(item.date, 'YYYY/MM/DD').format('YYYYMM') === monthList[yearMonthPosition];
       })
       // return monthData;
@@ -165,7 +170,7 @@ class App extends React.Component {
       yearMonthPosition < 1 ? monthBar = 1 : monthBar -= 1;
       yearMonthPosition < 1 ? clkPosition = 0 : clkPosition = 1;
 
-      let monthData = this.state.data.filter((item) => {
+      monthData = this.state.data.filter((item) => {
         return moment(item.date, 'YYYY/MM/DD').format('YYYYMM') === monthList[yearMonthPosition];
       })
       // return monthData;
@@ -184,6 +189,7 @@ class App extends React.Component {
       nextMonth: monthList[monthBar + 1],
       centerMonth: monthList[monthBar],
       prevMonth: monthList[monthBar - 1],
+      monthData: monthData,
     }, () => {
       this.calendarDays()
     });
@@ -310,20 +316,20 @@ class App extends React.Component {
 
           {/* 月份選擇 */}
           <div className="switch_bar">
-            <button type="button" className="ctrl_btn prev_btn" onClick={(e) => this.onClickPrev(e, this.state.prevMonth, this)}>
+            <button type="button" className="ctrl_btn prev_btn" onClick={(e) => this.onClickPrev(e, this.state.prevMonth, this)} disabled={this.state.dataLength <= 2}>
             </button>
             <ul className="month_bar">
               <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 0 })}>
-                <span>{moment(this.state.prevMonth, "YYYYMM").format("YYYY M月")}</span>
+                <span>{this.state.dataLength <= 2 ? '本月無資料' : moment(this.state.prevMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
               <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 1 })}>
                 <span>{moment(this.state.centerMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
               <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 2 })}>
-                <span>{moment(this.state.nextMonth, "YYYYMM").format("YYYY M月")}</span>
+                <span>{this.state.dataLength <= 1 ? '本月無資料' : moment(this.state.nextMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
             </ul>
-            <button type="button" className="ctrl_btn next_btn" onClick={(e) => this.onClickNext(e, this.state.nextMonth, this)}>
+            <button type="button" className="ctrl_btn next_btn" onClick={(e) => this.onClickNext(e, this.state.nextMonth, this)}  disabled={this.state.dataLength <= 2}>
             </button>
           </div>
 
