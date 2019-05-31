@@ -72,10 +72,10 @@ class App extends React.Component {
           dataLength: data.length,
           centerMonth: data[0].date,
           showYearMonth:moment(data[0].date, 'YYYY/MM/DD').format('YYYYMM')
+          
         });
-
-     
-        break;
+        this.YearMonth();
+        return;
 
       default:
         return;
@@ -320,13 +320,13 @@ class App extends React.Component {
             </button>
             <ul className="month_bar">
               <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 0 })}>
-                <span>{this.state.dataLength <= 2 ? '本月無資料' : moment(this.state.prevMonth, "YYYYMM").format("YYYY M月")}</span>
+                <span>{this.state.dataLength <= 1 ? '本月無資料' : moment(this.state.prevMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
               <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 1 })}>
                 <span>{moment(this.state.centerMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
               <li className={"month_box " + classNames({ 'clk': this.state.clkPosition === 2 })}>
-                <span>{this.state.dataLength <= 1 ? '本月無資料' : moment(this.state.nextMonth, "YYYYMM").format("YYYY M月")}</span>
+                <span>{this.state.dataLength <= 2 ? '本月無資料' : moment(this.state.nextMonth, "YYYYMM").format("YYYY M月")}</span>
               </li>
             </ul>
             <button type="button" className="ctrl_btn next_btn" onClick={(e) => this.onClickNext(e, this.state.nextMonth, this)}  disabled={this.state.dataLength <= 2}>
